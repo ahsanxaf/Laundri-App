@@ -19,6 +19,7 @@ import DressItem from '../components/DressItem';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { getProducts } from '../redux/ProductReducer';
+import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
@@ -29,6 +30,9 @@ const HomeScreen = () => {
     "we are loading your location"
   );
   const [locationServicesEnabled, setlocationServicesEnabled] = useState(false);
+
+  const total = cart.map((item) => item.quantity * item.price).reduce((curr,prev) => curr + prev,0);
+  const navigation = useNavigation();
 
   useEffect(() => {
     checkIfLocationEnabled();
@@ -195,6 +199,21 @@ const HomeScreen = () => {
         ))}
 
       </ScrollView>
+
+      {total === 0 ? (
+        null
+      ) : (
+        <Pressable style={styles.proceedNext}>
+          <View>
+            <Text style={{fontSize:17,fontWeight:"600",color:"white"}}>{cart.length} item(s) | $ {total}</Text>
+            <Text style={{fontSize:15,fontWeight:"400",color:"white",marginVertical:6}}>Extra charges might apply</Text>
+          </View>
+  
+          <Pressable onPress={() => navigation.navigate("PickUp")}>
+            <Text style={{fontSize:17,fontWeight:"600",color:"white"}}>Proceed to Pickup</Text>
+          </Pressable>
+        </Pressable>
+      )}
     </>
   ) 
 };
@@ -229,5 +248,15 @@ const styles = StyleSheet.create({
     borderWidth: 0.8,
     borderColor: "#C0C0C0",
     borderRadius: 7,
-  }
+  },
+  proceedNext: {
+    backgroundColor: "#088F8F",
+    padding: 10,
+    marginBottom: 40,
+    margin: 15,
+    borderRadius: 7,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent:"space-between",
+  },
 })
