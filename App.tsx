@@ -3,11 +3,15 @@
 import * as React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import AppNavigator from './src/navigations/AppNavigator';
+import { Provider } from 'react-redux';
+import store from './src/redux/store';
 
 
 function App() {
   return (
-    <AppNavigator/>
+    <Provider store={store}>
+      <AppNavigator/>
+    </Provider>
   );
 }
 
