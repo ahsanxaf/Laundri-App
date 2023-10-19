@@ -6,7 +6,7 @@ import {
     TextInput,
     Pressable,
     ScrollView,
-    Alert
+    Alert, Platform
   } from "react-native";
   import React, { useState } from "react";
   import HorizontalDatepicker from "@awrminkhodaei/react-native-horizontal-datepicker";
@@ -99,9 +99,9 @@ import {
   
     return (
       <>
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
           <Text style={{ fontSize: 16, fontWeight: "500", marginHorizontal: 10 }}>
-            enter Address
+            Enter Address
           </Text>
           <TextInput
             style={{
@@ -241,4 +241,8 @@ import {
   
   export default PickUpScreen;
   
-  const styles = StyleSheet.create({});
+  const styles = StyleSheet.create({
+    container: {
+        marginTop: Platform.OS === 'android' ? 40 : 0
+    }
+  });
