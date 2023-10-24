@@ -20,7 +20,7 @@ const LoginScreen = () => {
             <MaterialCommunityIcons name="email-outline" size={24} color="#002244" />
             <TextInput
               value={email}
-              onChange={(text) => setEmail(text)}
+              onChangeText={(text) => setEmail(text)}
               placeholder='Email'
               style={[styles.inputText, {fontSize: email ? 16 : 16}]}
             /></
@@ -30,7 +30,7 @@ const LoginScreen = () => {
             <Ionicons name="key-outline" size={24} color="#002244" />
             <TextInput
               value={password}
-              onChange={(text) => setPassword(text)}
+              onChangeText={(text) => setPassword(text)}
               placeholder='Password'
               secureTextEntry={true}
               style={[styles.inputText, {fontSize: password ? 16 : 16}]}

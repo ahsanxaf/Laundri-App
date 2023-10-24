@@ -1,15 +1,70 @@
-import { StyleSheet, Text, View, SafeAreaView, KeyboardAvoidingView, TextInput, Pressable, TouchableOpacity } from 'react-native'
+import { 
+    StyleSheet, Text, View, 
+    SafeAreaView, KeyboardAvoidingView, 
+    TextInput, Pressable, 
+    TouchableOpacity, 
+    Alert, 
+    ToastAndroid 
+} from 'react-native'
 import React, {useState} from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../../firebase/Firebase';
+import {doc, setDoc} from 'firebase/firestore';
 
 const RegisterScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
     const navigation = useNavigation();
+
+    const handleRegister = () => {
+        if(email === '' || password === '' || phone === ''){
+            Alert.alert(
+              "Invalid Details",
+              "Please fill all the details",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel"
+                },
+                { text: "OK", onPress: () => console.log("OK Pressed") }
+              ],
+              { cancelable: false }
+            );
+
+        }
+        createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+            try {
+                console.log('user userCredential: ', userCredential);
+                const user = userCredential._tokenResponse.email;
+                const myUserUid = auth.currentUser.uid;
+    
+                setDoc(doc(db, 'users', `${myUserUid}`), {
+                    email: user,
+                    phone: phone
+                })
+                
+                setEmail('');
+                setPassword('');
+                setPhone('');
+                ToastAndroid.showWithGravity(
+                  'User Registered Successfully',
+                  ToastAndroid.SHORT,
+                  ToastAndroid.CENTER,
+                );
+                
+    
+            } catch (error) {
+                console.log('Error in authentication: ',error)
+            }
+        })
+    }
+
   return (
     <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView>
@@ -22,7 +77,7 @@ const RegisterScreen = () => {
                     <MaterialCommunityIcons name="email-outline" size={24} color="#002244" />
                     <TextInput
                     value={email}
-                    onChange={(text) => setEmail(text)}
+                    onChangeText={(text) => setEmail(text)}
                     placeholder='Email Address'
                     keyboardType= 'email-address'
                     style={[styles.inputText, {fontSize: email ? 16 : 16}]}
@@ -33,7 +88,7 @@ const RegisterScreen = () => {
                     <Ionicons name="key-outline" size={24} color="#002244" />
                     <TextInput
                     value={password}
-                    onChange={(text) => setPassword(text)}
+                    onChangeText={(text) => setPassword(text)}
                     placeholder='Password'
                     secureTextEntry={true}
                     style={[styles.inputText, {fontSize: password ? 16 : 16}]}
@@ -44,14 +99,14 @@ const RegisterScreen = () => {
                     <AntDesign name="phone" size={24} color="#002244" />
                     <TextInput
                     value={phone}
-                    onChange={(text) => setPhone(text)}
+                    onChangeText={(text) => setPhone(text)}
                     placeholder='Phone Number'
                     keyboardType= 'numeric'
                     style={[styles.inputText, {fontSize: phone ? 16 : 16}]}
                     />
                 </View>
 
-                <TouchableOpacity style={styles.registerButton}>
+                <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
                     <Text style={{ fontSize: 18, textAlign: "center", color: "white" }}>Register</Text>
                 </TouchableOpacity>
 
