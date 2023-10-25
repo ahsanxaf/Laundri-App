@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Platform, SafeAreaView, KeyboardAvoidingView, TextInput, TouchableOpacity, Pressable, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, Platform, SafeAreaView, KeyboardAvoidingView, TextInput, TouchableOpacity, Pressable, ActivityIndicator, Alert } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,8 +21,6 @@ const LoginScreen = () => {
 
       if(authUser){
         navigation.replace('Home')
-      }else{
-        console.log('No use found')
       }
     })
     return unsubscribe;
@@ -33,6 +31,9 @@ const LoginScreen = () => {
       console.log('user credentials: ', userCredential)
       const user = userCredential.user;
       console.log("user details",user)
+    }).catch(e => {
+      Alert.alert('Invalid Login Credentials', 'No user found with this Email address')
+      console.log('No user found: ', e)
     })
   }
 
@@ -56,6 +57,7 @@ const LoginScreen = () => {
               <TextInput
                 value={email}
                 onChangeText={(text) => setEmail(text)}
+                keyboardType='email-address'
                 placeholder='Email'
                 style={[styles.inputText, {fontSize: email ? 16 : 16}]}
               /></

@@ -22,10 +22,13 @@ export const productSlice = createSlice({
             }else{
                 itemPresent.quantity--;
             }
+        },
+        cleanCart: (state) => {
+            state.cart = [];
         }
     }
 });
 
-export const {getProducts,incrementQty,decrementQty} = productSlice.actions;
+export const {getProducts,incrementQty,decrementQty, cleanCart} = productSlice.actions;
 
 export default productSlice.reducer;

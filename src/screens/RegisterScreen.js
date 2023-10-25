@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../../firebase/Firebase';
-import {doc, setDoc} from 'firebase/firestore';
+import {doc, setDoc, addDoc, collection} from 'firebase/firestore';
 
 const RegisterScreen = () => {
     const [email, setEmail] = useState('');
@@ -38,30 +38,33 @@ const RegisterScreen = () => {
             );
 
         }
-        createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
-            try {
-                console.log('user userCredential: ', userCredential);
-                const user = userCredential._tokenResponse.email;
-                const myUserUid = auth.currentUser.uid;
-    
-                setDoc(doc(db, 'users', `${myUserUid}`), {
-                    email: user,
-                    phone: phone
-                })
-                
-                setEmail('');
-                setPassword('');
-                setPhone('');
-                ToastAndroid.showWithGravity(
-                  'User Registered Successfully',
-                  ToastAndroid.SHORT,
-                  ToastAndroid.CENTER,
-                );
-                
-    
-            } catch (error) {
-                console.log('Error in authentication: ',error)
-            }
+        createUserWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
+            console.log('user userCredential: ', userCredential);
+            const user = userCredential._tokenResponse.email;
+            const myUserUid = auth.currentUser.uid;
+
+            setDoc(doc(db, 'users', `${myUserUid}`), {
+                email: user,
+                phone: phone
+            }).then(() => {
+              console.log("User added to db");
+            })
+            .catch((err) => {
+              console.log("Error while adding user to firestore: ", err);
+            });
+            
+            setEmail('');
+            setPassword('');
+            setPhone('');
+            ToastAndroid.showWithGravity(
+              'User Registered Successfully',
+              ToastAndroid.SHORT,
+              ToastAndroid.CENTER,
+            );
+               
+        }).catch(e => {
+            console.log('Error while Registering: ', e)
+            Alert.alert('Registeration Failed', 'Unknown Error')
         })
     }
 
