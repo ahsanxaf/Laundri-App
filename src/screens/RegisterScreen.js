@@ -21,7 +21,7 @@ const RegisterScreen = () => {
     const [phone, setPhone] = useState('');
     const navigation = useNavigation();
 
-    const handleRegister = () => {
+    const handleRegister = async() => {
         if(email === '' || password === '' || phone === ''){
             Alert.alert(
               "Invalid Details",
@@ -43,7 +43,7 @@ const RegisterScreen = () => {
             const user = userCredential._tokenResponse.email;
             const myUserUid = auth.currentUser.uid;
 
-            setDoc(doc(db, 'users', `${myUserUid}`), {
+            await setDoc(doc(db, 'users', `${myUserUid}`), {
                 email: user,
                 phone: phone
             }).then(() => {

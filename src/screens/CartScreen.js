@@ -10,6 +10,8 @@ import {
   incrementQuantity,
 } from "../redux/CartReducer";
 import { decrementQty, incrementQty } from "../redux/ProductReducer";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../../firebase/Firebase";
 
 const CartScreen = () => {
   const cart = useSelector((state) => state.cart.cart);
@@ -20,6 +22,19 @@ const CartScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch()
   const route = useRoute();
+  const userUid = auth.currentUser.uid;
+
+  const placeOrder = async() => {
+    navigation.navigate('Order');
+    dispatch(cleanCart());
+
+    await setDoc(doc(db, 'users'), {
+      orders: {...cart},
+      pickupDetails: route.params,
+    }, {
+      merge: true
+    })
+  }
 
   return (
     <>
@@ -335,7 +350,7 @@ const CartScreen = () => {
             </Text>
           </View>
 
-          <Pressable>
+          <Pressable onPress={placeOrder}>
             <Text style={{ fontSize: 17, fontWeight: "600", color: "white" }}>
               Place Order
             </Text>
